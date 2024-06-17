@@ -5,7 +5,7 @@ from pydev.utils.log import get_logger
 logger = get_logger(__name__)
 
 resolve_app = typer.Typer(
-    help="Resolve errors for the Python tools Bandit, Flake8, Pylint and Mypy.",
+    help="Resolve issues detected by Python tools like Bandit, Flake8, Pylint, and Mypy.",
     no_args_is_help=True,
 )
 

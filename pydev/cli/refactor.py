@@ -5,7 +5,7 @@ from pydev.utils.log import get_logger
 logger = get_logger(__name__)
 
 refactor_app = typer.Typer(
-    help="Refactor a Python module, class, or function.",
+    help="Refactor Python code including modules, classes, or functions to improve structure and readability.",
     no_args_is_help=True,
 )
 

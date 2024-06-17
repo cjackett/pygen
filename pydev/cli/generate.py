@@ -7,7 +7,7 @@ from pydev.utils.log import get_logger
 logger = get_logger(__name__)
 
 generate_app = Typer(
-    help="Generate Python tests or docstrings.",
+    help="Automatically generate Python tests or docstrings for modules, classes, or functions.",
     no_args_is_help=True,
 )
 

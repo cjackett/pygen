@@ -3,12 +3,12 @@ from datetime import datetime
 
 import typer
 
-from pydev.cli.commit import commit_app
 from pydev.cli.explain import explain_app
 from pydev.cli.generate import generate_app
+from pydev.cli.git import git_app
 from pydev.cli.refactor import refactor_app
 from pydev.cli.resolve import resolve_app
-from pydev.cli.suggest import suggest_app
+from pydev.cli.review import review_app
 from pydev.utils.log import LogLevel, get_logger, get_rich_handler
 from pydev.utils.rich import PYDEV
 
@@ -35,12 +35,12 @@ pydev = typer.Typer(
 
 app = typer.Typer()
 
-pydev.add_typer(commit_app, name="commit")
 pydev.add_typer(explain_app, name="explain")
 pydev.add_typer(generate_app, name="generate")
+pydev.add_typer(git_app, name="git")
 pydev.add_typer(refactor_app, name="refactor")
 pydev.add_typer(resolve_app, name="resolve")
-pydev.add_typer(suggest_app, name="suggest")
+pydev.add_typer(review_app, name="review")
 
 logger = get_logger(__name__)
 
@@ -59,15 +59,15 @@ def global_options(
 # Subcommands for convert
 @pydev.command()
 def convert(file_path: str) -> None:
-    """Convert a file into Python."""
+    """Convert various file types into Python code."""
     logger.info(f"Converting file: {file_path}")
 
 
 # Command for traceback
 @pydev.command()
 def traceback() -> None:
-    """Provide suggestions on how to fix a traceback."""
-    logger.info("Provide suggestions on how to fix a traceback.")
+    """Provide guidance and suggestions to resolve Python traceback errors."""
+    logger.info("Provide guidance and suggestions to resolve Python traceback errors.")
 
 
 if __name__ == "__main__":

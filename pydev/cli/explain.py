@@ -5,7 +5,7 @@ from pydev.utils.log import get_logger
 logger = get_logger(__name__)
 
 explain_app = typer.Typer(
-    help="Explain the Python codebase, module, class, or function.",
+    help="Provide detailed explanations for the Python codebase, module, class, or function.",
     no_args_is_help=True,
 )
 
