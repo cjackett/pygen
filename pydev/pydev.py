@@ -1,7 +1,7 @@
 import logging
-from datetime import datetime
 
 import typer
+from rich import print  # noqa: A004
 
 from pydev.cli.explain import explain_app
 from pydev.cli.generate import generate_app
@@ -9,10 +9,9 @@ from pydev.cli.git import git_app
 from pydev.cli.refactor import refactor_app
 from pydev.cli.resolve import resolve_app
 from pydev.cli.review import review_app
+from pydev.llm.client import LLMClient
 from pydev.utils.log import LogLevel, get_logger, get_rich_handler
-from pydev.utils.rich import PYDEV
-
-current_year = datetime.now().year
+from pydev.utils.rich import PYDEV, error_panel
 
 __author__ = "Chris Jackett"
 __credits__ = [
@@ -47,6 +46,7 @@ logger = get_logger(__name__)
 
 @pydev.callback()
 def global_options(
+    ctx: typer.Context,
     level: LogLevel = typer.Option(LogLevel.INFO, help="Logging level."),
 ) -> None:
     """
@@ -54,6 +54,18 @@ def global_options(
     """
     get_rich_handler().setLevel(logging.getLevelName(level.value))
     logger.info(f"Initialised {PYDEV} CLI v{__version__}")
+
+    try:
+        llm_client = LLMClient()
+        ctx.meta["llm_client"] = llm_client
+    except EnvironmentError as e:
+        logger.error(e)
+        print(error_panel(str(e)))
+        raise typer.Exit()
+    except Exception as e:
+        logger.error(e)
+        print(error_panel(f"Could not Initialise the LLM client: {e}"))
+        raise typer.Exit()
 
 
 # Subcommands for convert
