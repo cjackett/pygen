@@ -2,10 +2,9 @@ from pathlib import Path
 from typing import Optional
 
 import typer
-from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from pydev.llm.client import LLMClient
 from pydev.prompts.docstring import get_class_prompt, get_function_prompt, get_module_prompt
+from pydev.utils.llm import prompt_llm
 from pydev.utils.log import get_logger
 from pydev.utils.modules import (
     extract_class_text,
@@ -25,22 +24,8 @@ docstring_app = typer.Typer(
 )
 
 
-def prompt_llm(ctx: typer.Context, prompt: str) -> str:
-    llm_client: LLMClient = ctx.meta["llm_client"]
-
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-    ) as progress:
-        task = progress.add_task("Waiting for LLM response...", start=False)
-        result = llm_client.invoke(prompt)
-        progress.update(task, completed=True)
-
-    return result
-
-
 @docstring_app.command(name="module")
-def generate_module_docstring(
+def generate_docstring_module(
     ctx: typer.Context,
     module_name: Optional[str] = typer.Argument(None, help="Name of the module"),
     project_root: Path = typer.Option(Path("."), help="Root directory of the project"),
@@ -61,7 +46,7 @@ def generate_module_docstring(
 
 
 @docstring_app.command(name="class")
-def generate_class_docstring(
+def generate_docstring_class(
     ctx: typer.Context,
     class_name: Optional[str] = typer.Argument(None, help="Name of the class"),
     project_root: Path = typer.Option(Path("."), help="Root directory of the project"),
@@ -70,7 +55,6 @@ def generate_class_docstring(
     class_name, module_file_mapping = handle_class_selection(project_root, class_name)
 
     # Find the file containing the class
-    file_path = None
     for _, path in module_file_mapping.items():
         if class_name in extract_classes_and_functions(path)["classes"]:
             file_path = path
@@ -91,7 +75,7 @@ def generate_class_docstring(
 
 
 @docstring_app.command(name="function")
-def generate_function_docstring(
+def generate_docstring_function(
     ctx: typer.Context,
     function_name: Optional[str] = typer.Argument(None, help="Name of the function"),
     project_root: Path = typer.Option(Path("."), help="Root directory of the project"),
