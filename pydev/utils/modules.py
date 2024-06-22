@@ -171,7 +171,7 @@ def validate_function_name(paths: List[Path], function_name: str) -> Optional[Pa
     return None
 
 
-def read_file(file_path: Path) -> str:
+def get_module_content(file_path: Path) -> str:
     """Read the content of the given file."""
     if not file_path.exists():
         raise FileNotFoundError(f"File '{file_path}' not found.")
@@ -179,7 +179,7 @@ def read_file(file_path: Path) -> str:
         return file.read()
 
 
-def extract_class_text(file_path: Path, class_name: str) -> str:
+def get_class_content(file_path: Path, class_name: str) -> str:
     """Extract the text of the specified class from the given file."""
     class_name = normalize_class_name(class_name)
     with file_path.open("r") as file:
@@ -194,7 +194,7 @@ def extract_class_text(file_path: Path, class_name: str) -> str:
     return ""
 
 
-def extract_function_text(file_path: Path, function_name: str) -> str:
+def get_function_content(file_path: Path, function_name: str) -> str:
     """Extract the text of the specified function from the given file."""
     function_name = normalize_function_name(function_name)
     with file_path.open("r") as file:

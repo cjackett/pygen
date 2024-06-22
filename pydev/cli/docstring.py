@@ -7,12 +7,12 @@ from pydev.prompts.docstring import get_class_prompt, get_function_prompt, get_m
 from pydev.utils.llm import prompt_llm
 from pydev.utils.log import get_logger
 from pydev.utils.modules import (
-    extract_class_text,
-    extract_function_text,
+    get_class_content,
+    get_function_content,
+    get_module_content,
     handle_class_selection,
     handle_function_selection,
     handle_module_selection,
-    read_file,
 )
 
 logger = get_logger(__name__)
@@ -33,7 +33,7 @@ def generate_docstring_module(
     module_path = handle_module_selection(project_root, module_name)
 
     try:
-        module_content = read_file(module_path)
+        module_content = get_module_content(module_path)
     except FileNotFoundError as e:
         typer.echo(str(e))
         raise typer.Exit()
@@ -53,7 +53,7 @@ def generate_docstring_class(
     class_path, class_name = handle_class_selection(project_root, class_name)
 
     try:
-        class_content = extract_class_text(class_path, class_name)
+        class_content = get_class_content(class_path, class_name)
     except FileNotFoundError as e:
         typer.echo(str(e))
         raise typer.Exit()
@@ -73,7 +73,7 @@ def generate_docstring_function(
     function_path, function_name = handle_function_selection(project_root, function_name)
 
     try:
-        function_content = extract_function_text(function_path, function_name)
+        function_content = get_function_content(function_path, function_name)
     except FileNotFoundError as e:
         typer.echo(str(e))
         raise typer.Exit()
