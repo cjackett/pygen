@@ -1,6 +1,7 @@
 def get_module_prompt(module_content: str) -> str:
     return f"""
-    Generate a Python module docstring following PEP 257 standards and Google-style format for the code provided below.
+    You are a professional and experienced software engineer. Write a Python module docstring following PEP 257
+    standards and Google-style format for the code provided below.
 
     Module Code:
     {module_content}
@@ -24,7 +25,8 @@ def get_module_prompt(module_content: str) -> str:
 
 def get_class_prompt(class_content: str) -> str:
     return f"""
-    Generate a Python class docstring following PEP 257 standards and Google-style format for the code provided below.
+    You are a professional and experienced software engineer. Write a Python class docstring following PEP 257
+    standards and Google-style format for the code provided below.
 
     Class Code:
     {class_content}
@@ -45,8 +47,8 @@ def get_class_prompt(class_content: str) -> str:
 
 def get_function_prompt(function_content: str) -> str:
     return f"""
-    Generate a Python function docstring following PEP 257 standards and Google-style format for the code provided
-    below.
+    You are a professional and experienced software engineer. Write a Python function docstring following PEP 257
+    standards and Google-style format for the code provided below.
 
     Function Code:
     {function_content}
