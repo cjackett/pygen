@@ -7,6 +7,10 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+from pydev.utils.log import get_logger
+
+logger = get_logger(__name__)
+
 
 def list_python_files(directory: Path) -> List[Path]:
     """List all Python files in the given directory and subdirectories, excluding empty __init__.py files."""
@@ -27,8 +31,18 @@ def extract_module_name(file_path: Path) -> str:
     return file_path.name
 
 
-def extract_classes_and_functions(file_path: Path) -> Dict[str, List[str]]:
-    """Extract classes and functions from a Python file, including functions within classes."""
+def extract_classes(file_path: Path) -> List[str]:
+    """Extract classes from a Python file."""
+
+    with file_path.open("r") as file:
+        tree = ast.parse(file.read())
+
+    classes = [f"{file_path}:{node.name}()" for node in tree.body if isinstance(node, ast.ClassDef)]
+    return classes
+
+
+def extract_functions(file_path: Path) -> List[str]:
+    """Extract functions from a Python file, including functions within classes."""
 
     def get_functions(node: ast.AST) -> List[str]:
         """Recursively get all function names from the node."""
@@ -42,7 +56,6 @@ def extract_classes_and_functions(file_path: Path) -> Dict[str, List[str]]:
     with file_path.open("r") as file:
         tree = ast.parse(file.read())
 
-    classes = [f"{file_path}:{node.name}()" for node in tree.body if isinstance(node, ast.ClassDef)]
     functions = [f"{file_path}:{node.name}()" for node in tree.body if isinstance(node, ast.FunctionDef)]
 
     for node in tree.body:
@@ -50,7 +63,7 @@ def extract_classes_and_functions(file_path: Path) -> Dict[str, List[str]]:
             class_functions = get_functions(node)
             functions.extend([f"{file_path}:{func_name}()" for func_name in class_functions])
 
-    return {"classes": classes, "functions": functions}
+    return functions
 
 
 def select_from_list(options: List[Path] | List[str], title: str, prompt_message: str) -> str:
@@ -140,9 +153,9 @@ def validate_class_name(paths: List[Path], class_name: str) -> Optional[Path]:
     """Check if the class name exists in the module file mapping and return its path if found."""
     class_name = normalize_class_name(class_name)
     for file_path in paths:
-        class_function_names = extract_classes_and_functions(file_path)
-        for class_function_name in class_function_names["classes"]:
-            if class_name in class_function_name:
+        classes = extract_classes(file_path)
+        for class_entry in classes:
+            if class_name in class_entry:
                 return file_path
     return None
 
@@ -151,9 +164,9 @@ def validate_function_name(paths: List[Path], function_name: str) -> Optional[Pa
     """Check if the function name exists in the module file mapping and return its path if found."""
     function_name = normalize_function_name(function_name)
     for file_path in paths:
-        class_function_names = extract_classes_and_functions(file_path)
-        for class_function_name in class_function_names["functions"]:
-            if function_name in class_function_name:
+        functions = extract_functions(file_path)
+        for function_entry in functions:
+            if function_name in function_entry:
                 return file_path
     return None
 
@@ -202,16 +215,6 @@ def extract_function_text(file_path: Path, function_name: str) -> str:
     return function_text if function_text is not None else ""
 
 
-def find_function_module(module_file_mapping: Dict[str, Path], function_name: str) -> Optional[str]:
-    """Find the module that contains the given function."""
-    function_name = normalize_function_name(function_name)
-    for module_name, file in module_file_mapping.items():
-        class_function_names = extract_classes_and_functions(file)
-        if function_name in [normalize_function_name(name) for name in class_function_names["functions"]]:
-            return module_name
-    return None
-
-
 def handle_module_selection(project_root: Path, module_name: Optional[str]) -> Path:
     """Handle module name selection and validation."""
     module_file_list = get_module_file_list(project_root)
@@ -219,7 +222,7 @@ def handle_module_selection(project_root: Path, module_name: Optional[str]) -> P
         module_name = normalize_module_name(module_name)
         module_path = validate_module_name(module_file_list, module_name)
         if not module_path:
-            typer.echo(f"Module '{module_name}' not found.")
+            logger.warning(f"Module '{module_name}' not found")
             raise typer.Exit()
     else:
         module_path = Path(select_from_list([str(p) for p in module_file_list], "Modules", "Select a module by number"))
@@ -233,13 +236,13 @@ def handle_class_selection(project_root: Path, class_name: Optional[str]) -> Tup
         class_name = normalize_class_name(class_name)
         class_path = validate_class_name(module_file_list, class_name)
         if not class_path:
-            typer.echo(f"Class '{class_name}' not found in any module.")
+            logger.warning(f"Class '{class_name}()' not found in any module")
             raise typer.Exit()
     else:
         class_paths_list: List[str] = []
         for file_path in module_file_list:
-            class_function_names = extract_classes_and_functions(file_path)
-            class_paths_list.extend(cls for cls in class_function_names["classes"])
+            classes = extract_classes(file_path)
+            class_paths_list.extend(cls for cls in classes)
         class_selection = select_from_list(class_paths_list, "Classes", "Select a class by number")
         class_path_str, class_name = class_selection.split(":")
         class_path = Path(class_path_str)
@@ -253,12 +256,15 @@ def handle_function_selection(project_root: Path, function_name: Optional[str]) 
         function_name = normalize_function_name(function_name)
         function_path = validate_function_name(module_file_list, function_name)
         if not function_path:
-            typer.echo(f"Function '{function_name}' not found in any module.")
+            logger.warning(f"Function '{function_name}()' not found in any module")
             raise typer.Exit()
     else:
         module_path = Path(select_from_list([str(p) for p in module_file_list], "Modules", "Select a module by number"))
-        function_names = extract_classes_and_functions(module_path)["functions"]
-        function_selection = select_from_list(list(function_names), "Functions", "Select a function by number")
+        functions = extract_functions(module_path)
+        if not functions:
+            logger.warning(f"No functions found in module '{module_path.name}()'")
+            raise typer.Exit()
+        function_selection = select_from_list(list(functions), "Functions", "Select a function by number")
         function_path_str, function_name = function_selection.split(":")
         function_path = Path(function_path_str)
     return function_path, function_name
