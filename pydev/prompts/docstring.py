@@ -41,18 +41,23 @@ themselves. Do not include a typical usage section and omit the attributes and m
 
 
 def get_function_prompt(function_content: str) -> str:
-    return f"""Write a function-level Python docstring for the following code using PEP 257 standards and Google-style
-format. Ensure the docstring does not wrap lines. Only provide the docstring without any additional information or
-comments.
+    return f"""
+    Generate a Python function docstring following PEP 257 standards and Google-style format for the code provided
+    below.
 
-Function Code:
-{function_content}
+    Function Code:
+    {function_content}
 
-The docstring should include:
-1. A concise single-line summary of the function.
-2. A detailed description of the function's purpose and behavior.
-3. A list of parameters, each with a brief description.
-4. A description of the return value, if applicable.
+    The docstring should:
+    1. Start with triple quotes on a line by itself.
+    2. Include a single-line summary on the second line starting with an imperative mood.
+    3. Provide a detailed description of the function's purpose and behavior.
+    4. Include a section called "Args:" listing each parameter with a brief description.
+    5. Include a section called "Returns:" describing the return value, if applicable.
 
-Parameters should be listed with a dash '-' and properly indented. Do not include a typical usage section.
-"""
+    Formatting rules:
+    1. List each parameters within Args and Returns lists with a dash '-' and indent properly.
+    2. Avoid including a typical usage section.
+    3. Ensure the docstring lines do not wrap.
+    4. Only output the docstring without any additional information or comments.
+    """
