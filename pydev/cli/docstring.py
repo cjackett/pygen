@@ -5,7 +5,6 @@ import typer
 
 from pydev.prompts.docstring import get_class_prompt, get_function_prompt, get_module_prompt
 from pydev.utils.llm import prompt_llm
-from pydev.utils.log import get_logger
 from pydev.utils.modules import (
     get_class_content,
     get_function_content,
@@ -14,8 +13,6 @@ from pydev.utils.modules import (
     handle_function_selection,
     handle_module_selection,
 )
-
-logger = get_logger(__name__)
 
 docstring_app = typer.Typer(
     help="Generate a docstring for a Python module, class or function.",
