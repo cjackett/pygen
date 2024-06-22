@@ -25,10 +25,11 @@ class LLMClient:
                 "environment variables or a .env file in the project root."
             )
 
-        self.model_name = "claude-3-opus"
-        self.max_tokens = 20000
-        self.region_name = "us-west-2"
-        self.modelId = f"anthropic.{self.model_name}-20240229-v1:0"
+        # self.model_name = "claude-3-opus"
+        self.model_name = "claude-3-5-sonnet"
+        self.max_tokens = 200000
+        self.region_name = "us-east-1"
+        self.modelId = f"anthropic.{self.model_name}-20240620-v1:0"
         self.brt = boto3.client(
             service_name="bedrock-runtime",
             aws_access_key_id=self.aws_access_key_id,
