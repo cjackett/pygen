@@ -215,7 +215,7 @@ def get_function_content(file_path: Path, function_name: str) -> str:
     return function_text if function_text is not None else ""
 
 
-def handle_module_selection(project_root: Path, module_name: Optional[str]) -> Path:
+def get_module_path(project_root: Path, module_name: Optional[str]) -> Path:
     """Handle module name selection and validation."""
     module_file_list = get_module_file_list(project_root)
     if module_name:
@@ -229,7 +229,7 @@ def handle_module_selection(project_root: Path, module_name: Optional[str]) -> P
     return module_path
 
 
-def handle_class_selection(project_root: Path, class_name: Optional[str]) -> Tuple[Path, str]:
+def get_class_name_and_path(project_root: Path, class_name: Optional[str]) -> Tuple[Path, str]:
     """Handle class name selection and validation."""
     module_file_list = get_module_file_list(project_root)
     if class_name:
@@ -249,7 +249,7 @@ def handle_class_selection(project_root: Path, class_name: Optional[str]) -> Tup
     return class_path, class_name
 
 
-def handle_function_selection(project_root: Path, function_name: Optional[str]) -> Tuple[Path, str]:
+def get_function_name_and_path(project_root: Path, function_name: Optional[str]) -> Tuple[Path, str]:
     """Handle function name selection and validation."""
     module_file_list = get_module_file_list(project_root)
     if function_name:

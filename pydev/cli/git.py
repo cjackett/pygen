@@ -76,9 +76,7 @@ def git_pull_request(
                 raise typer.Exit()
 
             pr_message_prompt = get_pr_prompt(branch1, branch2, diff_text)
-            pr_message = prompt_llm(ctx, pr_message_prompt)
-            typer.echo("Generated Pull Request Message:")
-            typer.echo(pr_message)
+            prompt_llm(ctx, pr_message_prompt)
 
         except git.exc.GitError as git_error:
             typer.echo(f"Git error occurred: {git_error}")

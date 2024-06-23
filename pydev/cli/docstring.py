@@ -7,11 +7,11 @@ from pydev.prompts.docstring import get_class_prompt, get_function_prompt, get_m
 from pydev.utils.llm import prompt_llm
 from pydev.utils.modules import (
     get_class_content,
+    get_class_name_and_path,
     get_function_content,
+    get_function_name_and_path,
     get_module_content,
-    handle_class_selection,
-    handle_function_selection,
-    handle_module_selection,
+    get_module_path,
 )
 
 docstring_app = typer.Typer(
@@ -27,7 +27,7 @@ def generate_docstring_module(
     project_root: Path = typer.Option(Path("."), help="Root directory of the project"),
 ) -> None:
     """Generate a docstring for a module."""
-    module_path = handle_module_selection(project_root, module_name)
+    module_path = get_module_path(project_root, module_name)
 
     try:
         module_content = get_module_content(module_path)
@@ -46,7 +46,7 @@ def generate_docstring_class(
     project_root: Path = typer.Option(Path("."), help="Root directory of the project"),
 ) -> None:
     """Generate a docstring for a class."""
-    class_path, class_name = handle_class_selection(project_root, class_name)
+    class_path, class_name = get_class_name_and_path(project_root, class_name)
 
     try:
         class_content = get_class_content(class_path, class_name)
@@ -65,7 +65,7 @@ def generate_docstring_function(
     project_root: Path = typer.Option(Path("."), help="Root directory of the project"),
 ) -> None:
     """Generate a docstring for a function."""
-    function_path, function_name = handle_function_selection(project_root, function_name)
+    function_path, function_name = get_function_name_and_path(project_root, function_name)
 
     try:
         function_content = get_function_content(function_path, function_name)
