@@ -235,14 +235,15 @@ def get_class_name_and_path(project_root: Path, class_name: Optional[str]) -> Tu
     module_file_list = get_module_file_list(project_root)
     if class_name:
         class_name = normalise_class_name(class_name)
-        class_paths = [(p, c) for p in module_file_list for c in extract_classes(p) if class_name in c]
+        class_paths = [c for p in module_file_list for c in extract_classes(p) if class_name in c]
         if len(class_paths) > 1:
-            logger.info(f"Multiple classes found with the name '{class_name}': {[c for p, c in class_paths]}")
-            class_selection = select_from_list([c for p, c in class_paths], "Classes", "Select a class by number")
+            logger.info(f"Multiple classes found with the name '{class_name}': {list(class_paths)}")
+            class_selection = select_from_list(list(class_paths), "Classes", "Select a class by number")
             class_path_str, class_name = class_selection.split(":")
             class_path = Path(class_path_str)
         elif class_paths:
-            class_path, class_name = class_paths[0]
+            class_path_str, class_name = class_paths[0].split(":")
+            class_path = Path(class_path_str)
         else:
             logger.warning(f"Class '{class_name}()' not found in any module")
             raise typer.Exit()
@@ -262,16 +263,15 @@ def get_function_name_and_path(project_root: Path, function_name: Optional[str])
     module_file_list = get_module_file_list(project_root)
     if function_name:
         function_name = normalise_function_name(function_name)
-        function_paths = [(p, f) for p in module_file_list for f in extract_functions(p) if function_name in f]
+        function_paths = [f for p in module_file_list for f in extract_functions(p) if function_name in f]
         if len(function_paths) > 1:
-            logger.info(f"Multiple functions found with the name '{function_name}': {[f for p, f in function_paths]}")
-            function_selection = select_from_list(
-                [f for p, f in function_paths], "Functions", "Select a function by number"
-            )
+            logger.info(f"Multiple functions found with the name '{function_name}': {list(function_paths)}")
+            function_selection = select_from_list(list(function_paths), "Functions", "Select a function by number")
             function_path_str, function_name = function_selection.split(":")
             function_path = Path(function_path_str)
         elif function_paths:
-            function_path, function_name = function_paths[0]
+            function_path_str, function_name = function_paths[0].split(":")
+            function_path = Path(function_path_str)
         else:
             logger.warning(f"Function '{function_name}()' not found in any module")
             raise typer.Exit()
