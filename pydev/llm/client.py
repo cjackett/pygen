@@ -2,7 +2,7 @@ import json
 import logging
 import os
 import time
-from typing import Any, Dict, cast
+from typing import Any, Dict
 
 import boto3
 from botocore.exceptions import BotoCoreError, ClientError
@@ -29,7 +29,7 @@ class LLMClient:
         self.model_name = "claude-3-5-sonnet"
         self.max_tokens = 200000
         self.region_name = "us-east-1"
-        self.modelId = f"anthropic.{self.model_name}-20240620-v1:0"
+        self.model_id = f"anthropic.{self.model_name}-20240620-v1:0"
         self.brt = boto3.client(
             service_name="bedrock-runtime",
             aws_access_key_id=self.aws_access_key_id,
@@ -37,7 +37,7 @@ class LLMClient:
             region_name=self.region_name,
         )
 
-    def invoke(self, prompt: str, retries: int = 5, base_delay: int = 1) -> str:
+    def invoke_model(self, prompt: str, retries: int = 5, base_delay: int = 1) -> None:
         for attempt in range(retries):
             try:
                 body: str = json.dumps(
@@ -49,7 +49,7 @@ class LLMClient:
                 )
 
                 response = self.brt.invoke_model(
-                    body=body, modelId=self.modelId, accept="application/json", contentType="application/json"
+                    body=body, modelId=self.model_id, accept="application/json", contentType="application/json"
                 )
                 response_body: Dict[str, Any] = json.loads(response.get("body").read())
                 content = response_body.get("content")
@@ -57,11 +57,13 @@ class LLMClient:
                 if content and isinstance(content, list) and len(content) > 0:
                     text = content[0].get("text")
                     if text and isinstance(text, str):
-                        return cast(str, text)
+                        print(text)
                     else:
                         raise RuntimeError("Invalid response format: 'text' field is missing or not a string.")
                 else:
                     raise RuntimeError("Invalid response format: 'content' field is missing or not a list.")
+
+                return
 
             except (BotoCoreError, ClientError) as error:
                 self.logger.warning(f"Attempt {attempt + 1} failed with error: {error}")
@@ -73,5 +75,34 @@ class LLMClient:
                     self.logger.error("Max retries reached, giving up.")
                     raise RuntimeError("Failed to invoke model after multiple retries")
 
-        # This will never be reached, but it's necessary to satisfy type checkers
-        raise RuntimeError("Unexpected error in invoke method")
+    def invoke_model_with_response_stream(self, prompt: str) -> None:
+        """
+        Streams the response for a text prompt.
+        Args:
+            prompt (str): The prompt text.
+        """
+        try:
+            body = json.dumps(
+                {
+                    "anthropic_version": "bedrock-2023-05-31",
+                    "max_tokens": self.max_tokens,
+                    "messages": [{"role": "user", "content": prompt}],
+                }
+            )
+
+            response = self.brt.invoke_model_with_response_stream(body=body, modelId=self.model_id)
+
+            for event in response.get("body"):
+                chunk = json.loads(event["chunk"]["bytes"])
+
+                if chunk["type"] == "content_block_delta" and chunk["delta"]["type"] == "text_delta":
+                    print(chunk["delta"]["text"], end="")
+
+                elif chunk["type"] == "message_delta":
+                    self.logger.info(f"\nStop reason: {chunk['delta']['stop_reason']}")
+                    self.logger.info(f"Stop sequence: {chunk['delta']['stop_sequence']}")
+                    self.logger.info(f"Output tokens: {chunk['usage']['output_tokens']}")
+
+        except (BotoCoreError, ClientError) as error:
+            self.logger.error(f"Error occurred: {error}")
+            raise RuntimeError("Failed to stream prompt")

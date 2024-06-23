@@ -36,8 +36,7 @@ def generate_docstring_module(
         raise typer.Exit()
 
     prompt = get_module_prompt(module_content)
-    module_docstring = prompt_llm(ctx, prompt)
-    typer.echo(module_docstring)
+    prompt_llm(ctx, prompt)
 
 
 @docstring_app.command(name="class")
@@ -56,8 +55,7 @@ def generate_docstring_class(
         raise typer.Exit()
 
     prompt = get_class_prompt(class_content)
-    class_docstring = prompt_llm(ctx, prompt)
-    typer.echo(class_docstring)
+    prompt_llm(ctx, prompt)
 
 
 @docstring_app.command(name="function")
@@ -76,5 +74,4 @@ def generate_docstring_function(
         raise typer.Exit()
 
     prompt = get_function_prompt(function_content)
-    function_docstring = prompt_llm(ctx, prompt)
-    typer.echo(function_docstring)
+    prompt_llm(ctx, prompt)

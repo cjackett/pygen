@@ -45,8 +45,7 @@ def review_module(
         raise typer.Exit()
 
     prompt = get_module_prompt(module_content)
-    module_review = prompt_llm(ctx, prompt)
-    typer.echo(module_review)
+    prompt_llm(ctx, prompt)
 
 
 @review_app.command(name="class")
@@ -65,8 +64,7 @@ def review_class(
         raise typer.Exit()
 
     prompt = get_class_prompt(class_content)
-    class_review = prompt_llm(ctx, prompt)
-    typer.echo(class_review)
+    prompt_llm(ctx, prompt)
 
 
 @review_app.command(name="function")
@@ -85,5 +83,4 @@ def review_function(
         raise typer.Exit()
 
     prompt = get_function_prompt(function_content)
-    function_docstring = prompt_llm(ctx, prompt)
-    typer.echo(function_docstring)
+    prompt_llm(ctx, prompt)
