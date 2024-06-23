@@ -60,7 +60,7 @@ class LogMixin:
 
     @property
     def logger(self) -> logging.Logger:
-        # Lazy initialization
+        # Lazy initialisation
         if not hasattr(self, "_logger"):
             self._logger = get_logger(self.__class__.__name__)
             # Add NullHandler to avoid logs on stdout by default

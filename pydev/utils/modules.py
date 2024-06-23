@@ -120,19 +120,19 @@ def get_module_file_list(project_root: Path) -> List[Path]:
     return list_python_files(project_root)
 
 
-def normalize_module_name(module_name: str) -> str:
+def normalise_module_name(module_name: str) -> str:
     """Ensure the module name has a .py extension."""
     if not module_name.endswith(".py"):
         module_name += ".py"
     return module_name
 
 
-def normalize_class_name(class_name: str) -> str:
+def normalise_class_name(class_name: str) -> str:
     """Ensure the class name does not have trailing parentheses."""
     return class_name.rstrip("()")
 
 
-def normalize_function_name(function_name: str) -> str:
+def normalise_function_name(function_name: str) -> str:
     """Ensure the function name does not have trailing parentheses."""
     return function_name.rstrip("()")
 
@@ -144,14 +144,14 @@ def get_module_names_from_paths(paths: List[Path]) -> Dict[str, Path]:
 
 def validate_module_name(paths: List[Path], module_name: str) -> Optional[Path]:
     """Check if the module name exists in the list of paths and return its path if found."""
-    module_name = normalize_module_name(module_name)
+    module_name = normalise_module_name(module_name)
     module_name_to_path = get_module_names_from_paths(paths)
     return module_name_to_path.get(module_name)
 
 
 def validate_class_name(paths: List[Path], class_name: str) -> Optional[Path]:
     """Check if the class name exists in the module file mapping and return its path if found."""
-    class_name = normalize_class_name(class_name)
+    class_name = normalise_class_name(class_name)
     for file_path in paths:
         classes = extract_classes(file_path)
         for class_entry in classes:
@@ -162,7 +162,7 @@ def validate_class_name(paths: List[Path], class_name: str) -> Optional[Path]:
 
 def validate_function_name(paths: List[Path], function_name: str) -> Optional[Path]:
     """Check if the function name exists in the module file mapping and return its path if found."""
-    function_name = normalize_function_name(function_name)
+    function_name = normalise_function_name(function_name)
     for file_path in paths:
         functions = extract_functions(file_path)
         for function_entry in functions:
@@ -181,7 +181,7 @@ def get_module_content(file_path: Path) -> str:
 
 def get_class_content(file_path: Path, class_name: str) -> str:
     """Extract the text of the specified class from the given file."""
-    class_name = normalize_class_name(class_name)
+    class_name = normalise_class_name(class_name)
     with file_path.open("r") as file:
         content = file.read()
         tree = ast.parse(content)
@@ -196,7 +196,7 @@ def get_class_content(file_path: Path, class_name: str) -> str:
 
 def get_function_content(file_path: Path, function_name: str) -> str:
     """Extract the text of the specified function from the given file."""
-    function_name = normalize_function_name(function_name)
+    function_name = normalise_function_name(function_name)
     with file_path.open("r") as file:
         content = file.read()
         tree = ast.parse(content)
@@ -219,7 +219,7 @@ def get_module_path(project_root: Path, module_name: Optional[str]) -> Path:
     """Handle module name selection and validation."""
     module_file_list = get_module_file_list(project_root)
     if module_name:
-        module_name = normalize_module_name(module_name)
+        module_name = normalise_module_name(module_name)
         module_path = validate_module_name(module_file_list, module_name)
         if not module_path:
             logger.warning(f"Module '{module_name}' not found")
@@ -233,7 +233,7 @@ def get_class_name_and_path(project_root: Path, class_name: Optional[str]) -> Tu
     """Handle class name selection and validation."""
     module_file_list = get_module_file_list(project_root)
     if class_name:
-        class_name = normalize_class_name(class_name)
+        class_name = normalise_class_name(class_name)
         class_path = validate_class_name(module_file_list, class_name)
         if not class_path:
             logger.warning(f"Class '{class_name}()' not found in any module")
@@ -253,7 +253,7 @@ def get_function_name_and_path(project_root: Path, function_name: Optional[str])
     """Handle function name selection and validation."""
     module_file_list = get_module_file_list(project_root)
     if function_name:
-        function_name = normalize_function_name(function_name)
+        function_name = normalise_function_name(function_name)
         function_path = validate_function_name(module_file_list, function_name)
         if not function_path:
             logger.warning(f"Function '{function_name}()' not found in any module")
