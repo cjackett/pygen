@@ -12,20 +12,6 @@ from pydev.utils.log import get_logger
 logger = get_logger(__name__)
 
 
-def list_python_files(directory: Path) -> List[Path]:
-    """List all Python files in the given directory and subdirectories, excluding empty __init__.py files."""
-    python_files = []
-
-    for p in directory.rglob("*.py"):
-        if p.name == "__init__.py":
-            # Check if __init__.py is empty
-            if p.stat().st_size == 0:
-                continue  # Skip empty __init__.py files
-        python_files.append(p)
-
-    return python_files
-
-
 def extract_module_name(file_path: Path) -> str:
     """Extract the module name from the file path including .py extension."""
     return file_path.name
@@ -116,8 +102,18 @@ def select_from_list(options: List[Path] | List[str], title: str, prompt_message
 
 
 def get_module_file_list(project_root: Path) -> List[Path]:
-    """Get a list of file paths for all Python modules from the project root."""
-    return list_python_files(project_root)
+    """Get a recursive list of file paths for all Python modules from the project root, excluding empty __init__.py
+    files."""
+    python_files = []
+
+    for p in project_root.rglob("*.py"):
+        if p.name == "__init__.py":
+            # Check if __init__.py is empty
+            if p.stat().st_size == 0:
+                continue  # Skip empty __init__.py files
+        python_files.append(p)
+
+    return python_files
 
 
 def normalise_module_name(module_name: str) -> str:
@@ -216,12 +212,17 @@ def get_function_content(file_path: Path, function_name: str) -> str:
 
 
 def get_module_path(project_root: Path, module_name: Optional[str]) -> Path:
-    """Handle module name selection and validation."""
+    """Get the module name selection and validation."""
     module_file_list = get_module_file_list(project_root)
     if module_name:
         module_name = normalise_module_name(module_name)
-        module_path = validate_module_name(module_file_list, module_name)
-        if not module_path:
+        module_paths = [p for p in module_file_list if module_name in p.name]
+        if len(module_paths) > 1:
+            logger.info(f"Multiple modules found with the name '{module_name}': {[str(p) for p in module_paths]}")
+            module_path = Path(select_from_list([str(p) for p in module_paths], "Modules", "Select a module by number"))
+        elif module_paths:
+            module_path = module_paths[0]
+        else:
             logger.warning(f"Module '{module_name}' not found")
             raise typer.Exit()
     else:
@@ -230,12 +231,19 @@ def get_module_path(project_root: Path, module_name: Optional[str]) -> Path:
 
 
 def get_class_name_and_path(project_root: Path, class_name: Optional[str]) -> Tuple[Path, str]:
-    """Handle class name selection and validation."""
+    """Get the class name selection and validation."""
     module_file_list = get_module_file_list(project_root)
     if class_name:
         class_name = normalise_class_name(class_name)
-        class_path = validate_class_name(module_file_list, class_name)
-        if not class_path:
+        class_paths = [(p, c) for p in module_file_list for c in extract_classes(p) if class_name in c]
+        if len(class_paths) > 1:
+            logger.info(f"Multiple classes found with the name '{class_name}': {[c for p, c in class_paths]}")
+            class_selection = select_from_list([c for p, c in class_paths], "Classes", "Select a class by number")
+            class_path_str, class_name = class_selection.split(":")
+            class_path = Path(class_path_str)
+        elif class_paths:
+            class_path, class_name = class_paths[0]
+        else:
             logger.warning(f"Class '{class_name}()' not found in any module")
             raise typer.Exit()
     else:
@@ -250,12 +258,21 @@ def get_class_name_and_path(project_root: Path, class_name: Optional[str]) -> Tu
 
 
 def get_function_name_and_path(project_root: Path, function_name: Optional[str]) -> Tuple[Path, str]:
-    """Handle function name selection and validation."""
+    """Get the function name selection and validation."""
     module_file_list = get_module_file_list(project_root)
     if function_name:
         function_name = normalise_function_name(function_name)
-        function_path = validate_function_name(module_file_list, function_name)
-        if not function_path:
+        function_paths = [(p, f) for p in module_file_list for f in extract_functions(p) if function_name in f]
+        if len(function_paths) > 1:
+            logger.info(f"Multiple functions found with the name '{function_name}': {[f for p, f in function_paths]}")
+            function_selection = select_from_list(
+                [f for p, f in function_paths], "Functions", "Select a function by number"
+            )
+            function_path_str, function_name = function_selection.split(":")
+            function_path = Path(function_path_str)
+        elif function_paths:
+            function_path, function_name = function_paths[0]
+        else:
             logger.warning(f"Function '{function_name}()' not found in any module")
             raise typer.Exit()
     else:
