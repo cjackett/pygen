@@ -3,15 +3,15 @@ import logging
 import typer
 from rich import print  # noqa: A004
 
-from pydev.cli.explain import explain_app
-from pydev.cli.generate import generate_app
-from pydev.cli.git import git_app
-from pydev.cli.refactor import refactor_app
-from pydev.cli.resolve import resolve_app
-from pydev.cli.review import review_app
-from pydev.llm.client import LLMClient
-from pydev.utils.log import LogLevel, get_logger, get_rich_handler
-from pydev.utils.rich import PYDEV, error_panel
+from pygen.cli.explain import explain_app
+from pygen.cli.generate import generate_app
+from pygen.cli.git import git_app
+from pygen.cli.refactor import refactor_app
+from pygen.cli.resolve import resolve_app
+from pygen.cli.review import review_app
+from pygen.llm.client import LLMClient
+from pygen.utils.log import LogLevel, get_logger, get_rich_handler
+from pygen.utils.rich import PYDEV, error_panel
 
 __author__ = "Chris Jackett"
 __credits__ = [
@@ -23,7 +23,7 @@ __maintainer__ = "Chris Jackett"
 __email__ = "chris.jackett@csiro.au"
 __status__ = "Development"
 
-pydev = typer.Typer(
+pygen = typer.Typer(
     name="PyDev",
     help="""PyDev\n
         A Python Development AI Co-pilot""",
@@ -34,17 +34,17 @@ pydev = typer.Typer(
 
 app = typer.Typer()
 
-pydev.add_typer(explain_app, name="explain")
-pydev.add_typer(generate_app, name="generate")
-pydev.add_typer(git_app, name="git")
-pydev.add_typer(refactor_app, name="refactor")
-pydev.add_typer(resolve_app, name="resolve")
-pydev.add_typer(review_app, name="review")
+pygen.add_typer(explain_app, name="explain")
+pygen.add_typer(generate_app, name="generate")
+pygen.add_typer(git_app, name="git")
+pygen.add_typer(refactor_app, name="refactor")
+pygen.add_typer(resolve_app, name="resolve")
+pygen.add_typer(review_app, name="review")
 
 logger = get_logger(__name__)
 
 
-@pydev.callback()
+@pygen.callback()
 def global_options(
     ctx: typer.Context,
     level: LogLevel = typer.Option(LogLevel.INFO, help="Logging level."),
@@ -69,18 +69,18 @@ def global_options(
 
 
 # Subcommands for convert
-@pydev.command()
+@pygen.command()
 def convert(file_path: str) -> None:
     """Convert various file types into Python code."""
     logger.info(f"Converting file: {file_path}")
 
 
 # Command for traceback
-@pydev.command()
+@pygen.command()
 def traceback() -> None:
     """Provide guidance and suggestions to resolve Python traceback errors."""
     logger.info("Provide guidance and suggestions to resolve Python traceback errors.")
 
 
 if __name__ == "__main__":
-    pydev()
+    pygen()

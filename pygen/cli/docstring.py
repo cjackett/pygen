@@ -3,10 +3,9 @@ from typing import Optional
 
 import typer
 
-from pydev.prompts.review import get_class_prompt, get_function_prompt, get_module_prompt
-from pydev.utils.llm import prompt_llm
-from pydev.utils.log import get_logger
-from pydev.utils.modules import (
+from pygen.prompts.docstring import get_class_prompt, get_function_prompt, get_module_prompt
+from pygen.utils.llm import prompt_llm
+from pygen.utils.modules import (
     get_class_content,
     get_class_name_and_path,
     get_function_content,
@@ -15,27 +14,19 @@ from pydev.utils.modules import (
     get_module_path,
 )
 
-logger = get_logger(__name__)
-
-review_app = typer.Typer(
-    help="Review the codebase, modules, classes, or functions and suggest improvements.",
+docstring_app = typer.Typer(
+    help="Generate a docstring for a Python module, class or function.",
     no_args_is_help=True,
 )
 
 
-@review_app.command(name="codebase")
-def review_codebase() -> None:
-    """Review the codebase and suggest improvements."""
-    logger.info("Suggesting improvements for the codebase")
-
-
-@review_app.command(name="module")
-def review_module(
+@docstring_app.command(name="module")
+def generate_docstring_module(
     ctx: typer.Context,
     module_name: Optional[str] = typer.Argument(None, help="Name of the module"),
     project_root: Path = typer.Option(Path("."), help="Root directory of the project"),
 ) -> None:
-    """Review a module and suggest improvements."""
+    """Generate a docstring for a module."""
     module_path = get_module_path(project_root, module_name)
 
     try:
@@ -48,13 +39,13 @@ def review_module(
     prompt_llm(ctx, prompt)
 
 
-@review_app.command(name="class")
-def review_class(
+@docstring_app.command(name="class")
+def generate_docstring_class(
     ctx: typer.Context,
     class_name: Optional[str] = typer.Argument(None, help="Name of the class"),
     project_root: Path = typer.Option(Path("."), help="Root directory of the project"),
 ) -> None:
-    """Review a class and suggest improvements."""
+    """Generate a docstring for a class."""
     class_path, class_name = get_class_name_and_path(project_root, class_name)
 
     try:
@@ -67,13 +58,13 @@ def review_class(
     prompt_llm(ctx, prompt)
 
 
-@review_app.command(name="function")
-def review_function(
+@docstring_app.command(name="function")
+def generate_docstring_function(
     ctx: typer.Context,
     function_name: Optional[str] = typer.Argument(None, help="Name of the function"),
     project_root: Path = typer.Option(Path("."), help="Root directory of the project"),
 ) -> None:
-    """Review a function and suggest improvements."""
+    """Generate a docstring for a function."""
     function_path, function_name = get_function_name_and_path(project_root, function_name)
 
     try:

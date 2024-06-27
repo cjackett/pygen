@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "pydev"
+name = "pygen"
 version = "0.0.2"
-description = "A Python Development AI Co-pilot"
+description = "A Python Generative AI Co-pilot"
 authors = ["Chris Jackett <chris.jackett@csiro.au>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-pydev = "pydev.pydev:pydev"
+pygen = "pygen.pygen:pygen"
 
 [tool.poetry.dependencies]
 python = "^3.10"

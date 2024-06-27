@@ -1,8 +1,8 @@
 from typer import Typer
 
-from pydev.cli.docstring import docstring_app
-from pydev.cli.tests import tests_app
-from pydev.utils.log import get_logger
+from pygen.cli.docstring import docstring_app
+from pygen.cli.tests import tests_app
+from pygen.utils.log import get_logger
 
 logger = get_logger(__name__)
 

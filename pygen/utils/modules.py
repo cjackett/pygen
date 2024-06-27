@@ -7,7 +7,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from pydev.utils.log import get_logger
+from pygen.utils.log import get_logger
 
 logger = get_logger(__name__)
 

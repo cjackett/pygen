@@ -2,7 +2,7 @@ import typer
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from pydev.llm.client import LLMClient
+from pygen.llm.client import LLMClient
 
 
 def prompt_llm(ctx: typer.Context, prompt: str) -> None:

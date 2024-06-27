@@ -4,9 +4,9 @@ from pathlib import Path
 import git
 import typer
 
-from pydev.prompts.git import get_pr_prompt
-from pydev.utils.llm import prompt_llm
-from pydev.utils.log import get_logger
+from pygen.prompts.git import get_pr_prompt
+from pygen.utils.llm import prompt_llm
+from pygen.utils.log import get_logger
 
 logger = get_logger(__name__)
 

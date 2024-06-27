@@ -1,6 +1,6 @@
 import typer
 
-from pydev.utils.log import get_logger
+from pygen.utils.log import get_logger
 
 logger = get_logger(__name__)
 
