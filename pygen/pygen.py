@@ -26,7 +26,7 @@ __status__ = "Development"
 pygen = typer.Typer(
     name="PyDev",
     help="""PyDev\n
-        A Python Development AI Co-pilot""",
+        A Python Generative AI Co-pilot""",
     short_help="PyDev",
     no_args_is_help=True,
     pretty_exceptions_show_locals=False,
