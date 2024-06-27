@@ -25,6 +25,18 @@ To install PyGen, use pip:
 pip install pygen
 ```
 
+## Environment Setup
+
+PyGen requires an environment file (.env) in the root directory with the following AWS credentials to access a Large 
+Language Model (LLM) on AWS Bedrock:
+
+```sh
+AWS_ACCESS_KEY_ID=<your_access_key_id>
+AWS_SECRET_ACCESS_KEY=<your_secret_access_key>
+```
+
+Ensure you have set up an LLM on AWS Bedrock and provide the above keys in the .env file.
+
 ## Usage
 
 PyGen is a Python Typer command-line interface (CLI) tool. Below are some examples of how to use it:
