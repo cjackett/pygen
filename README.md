@@ -1,4 +1,7 @@
-# PyGen
+<!-- PROJECT LOGO -->
+<figure markdown style="text-align: center">
+  <img src="docs/img/logo.jpg" alt="PyGen logo" width="512px">
+</figure>
 
 PyGen is a Python Generative AI Co-pilot designed to enhance productivity and streamline development processes for
 Python developers. This tool leverages state-of-the-art large language models (LLMs) such as GPT-4 and Claude 3.5 
