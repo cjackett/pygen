@@ -166,13 +166,16 @@ def validate_function_name(paths: List[Path], function_name: str) -> Optional[Pa
 
 def remove_module_docstring(tree: ast.Module) -> ast.Module:
     """Remove the module-level docstring if it exists."""
-    if (len(tree.body) > 0 and isinstance(tree.body[0], ast.Expr) and
-            isinstance(tree.body[0].value, (ast.Str, ast.Constant))):
+    if (
+        len(tree.body) > 0
+        and isinstance(tree.body[0], ast.Expr)
+        and isinstance(tree.body[0].value, (ast.Str, ast.Constant))
+    ):
         tree.body.pop(0)
     return tree
 
 
-def get_module_content(file_path: Path, strip: bool) -> str:
+def get_module_content(file_path: Path, strip: bool = False) -> str:
     """Read the content of the given file, optionally stripping the module-level docstring."""
     if not file_path.exists():
         raise FileNotFoundError(f"File '{file_path}' not found.")
@@ -194,8 +197,11 @@ def get_module_content(file_path: Path, strip: bool) -> str:
 
 def remove_class_docstring(node: ast.ClassDef) -> ast.ClassDef:
     """Remove the docstring from a class node if it exists."""
-    if (len(node.body) > 0 and isinstance(node.body[0], ast.Expr) and
-            isinstance(node.body[0].value, (ast.Str, ast.Constant))):
+    if (
+        len(node.body) > 0
+        and isinstance(node.body[0], ast.Expr)
+        and isinstance(node.body[0].value, (ast.Str, ast.Constant))
+    ):
         node.body.pop(0)
     return node
 
@@ -207,7 +213,7 @@ def find_class_code(node: ast.ClassDef, content: str, strip: bool) -> str:
     return ast.unparse(node)
 
 
-def get_class_content(file_path: Path, class_name: str, strip: bool) -> str:
+def get_class_content(file_path: Path, class_name: str, strip: bool = False) -> str:
     """Extract the text of the specified class from the given file."""
     class_name = normalise_class_name(class_name)
     try:
@@ -227,11 +233,13 @@ def get_class_content(file_path: Path, class_name: str, strip: bool) -> str:
     return ""
 
 
-
 def remove_function_docstring(node: ast.FunctionDef) -> ast.FunctionDef:
     """Remove the docstring from a function node if it exists."""
-    if (len(node.body) > 0 and isinstance(node.body[0], ast.Expr) and
-            isinstance(node.body[0].value, (ast.Str, ast.Constant))):
+    if (
+        len(node.body) > 0
+        and isinstance(node.body[0], ast.Expr)
+        and isinstance(node.body[0].value, (ast.Str, ast.Constant))
+    ):
         node.body.pop(0)
     return node
 
@@ -254,7 +262,7 @@ def find_function(node: ast.AST, name: str, content: str, strip: bool) -> Option
     return None
 
 
-def get_function_content(file_path: Path, function_name: str, strip: bool) -> str:
+def get_function_content(file_path: Path, function_name: str, strip: bool = False) -> str:
     """Extract the text of the specified function from the given file."""
     function_name = normalise_function_name(function_name)
     try:
