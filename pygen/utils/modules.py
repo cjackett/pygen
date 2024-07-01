@@ -4,10 +4,10 @@ from typing import Dict, List, Optional, Tuple
 
 import typer
 from rich.console import Console
-from rich.panel import Panel
 from rich.table import Table
 
 from pygen.utils.log import get_logger
+from pygen.utils.rich import selection_panel
 
 logger = get_logger(__name__)
 
@@ -84,12 +84,9 @@ def select_from_list(options: List[Path] | List[str], title: str, prompt_message
                 row.append("")  # Fill with an empty string if no more options
         table.add_row(*row)
 
-    # Wrap the table in a Panel without inner border
-    panel = Panel(table, title=f"[bold magenta]{title}[/bold magenta]", border_style="bright_magenta")
-
-    console.print(panel)
-
+    console.print(selection_panel(table, f"[bold magenta]{title}[/bold magenta]"))
     choice = typer.prompt(prompt_message)
+
     try:
         index = int(choice) - 1
         if 0 <= index < len(options):

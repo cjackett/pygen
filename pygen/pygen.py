@@ -48,6 +48,7 @@ logger = get_logger(__name__)
 def global_options(
     ctx: typer.Context,
     level: LogLevel = typer.Option(LogLevel.INFO, help="Logging level."),
+    show: bool = typer.Option(False, help="Show the prompt being sent to the LLM."),
 ) -> None:
     """
     Global options for Marimba CLI.
@@ -58,6 +59,7 @@ def global_options(
     try:
         llm_client = LLMClient()
         ctx.meta["llm_client"] = llm_client
+        ctx.meta["show"] = show
     except EnvironmentError as e:
         logger.error(e)
         print(error_panel(str(e)))

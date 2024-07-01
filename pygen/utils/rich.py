@@ -6,6 +6,7 @@ from typing import Tuple
 
 from rich.panel import Panel
 from rich.progress import BarColumn, ProgressColumn, TaskProgressColumn, TextColumn, TimeRemainingColumn
+from rich.table import Table
 
 PYDEV = "[bold][aquamarine3]PyDev[/aquamarine3][/bold]"
 
@@ -50,6 +51,41 @@ def error_panel(message: str, title: str = "Error") -> Panel:
         An error panel.
     """
     return Panel(message, title=title, title_align="left", border_style="red")
+
+
+def prompt_panel(message: str, title: str = "Prompt") -> Panel:
+    """Create a prompt panel with a customisable message and title.
+
+    This function generates a Panel object with the provided message and title. The panel is styled with a cyan border
+    and left-aligned title, suitable for displaying prompts or information to the user. The width of the panel is
+    automatically adjusted based on the longest line in the message.
+
+    Args:
+        - message: The main content to be displayed in the panel.
+        - title: The title of the panel. Defaults to "Prompt".
+
+    Returns:
+        A Panel object configured with the specified message and title.
+    """
+    longest_line_length = max(len(line) for line in message.split("\n"))
+    panel_width = longest_line_length + 8
+    return Panel(message, title="Prompt", title_align="left", border_style="cyan", width=panel_width)
+
+
+def selection_panel(table: Table, title: str = "Select from list") -> Panel:
+    """Create a Panel containing a Table with a customisable title.
+
+    This function wraps the provided Table within a Panel, allowing for a visually appealing presentation of tabular
+    data. The Panel includes a customisable title and uses a bright magenta border style for emphasis.
+
+    Args:
+        - table: A Table object to be displayed within the Panel.
+        - title: A string representing the title of the Panel. Defaults to "Select from list".
+
+    Returns:
+        A Panel object containing the provided Table, with the specified title and styling.
+    """
+    return Panel(table, title=title, title_align="left", border_style="bright_magenta")
 
 
 def format_command(command_name: str) -> str:
