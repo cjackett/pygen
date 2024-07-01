@@ -164,47 +164,111 @@ def validate_function_name(paths: List[Path], function_name: str) -> Optional[Pa
     return None
 
 
-def get_module_content(file_path: Path) -> str:
-    """Read the content of the given file."""
+def remove_module_docstring(tree: ast.Module) -> ast.Module:
+    """Remove the module-level docstring if it exists."""
+    if (len(tree.body) > 0 and isinstance(tree.body[0], ast.Expr) and
+            isinstance(tree.body[0].value, (ast.Str, ast.Constant))):
+        tree.body.pop(0)
+    return tree
+
+
+def get_module_content(file_path: Path, strip: bool) -> str:
+    """Read the content of the given file, optionally stripping the module-level docstring."""
     if not file_path.exists():
         raise FileNotFoundError(f"File '{file_path}' not found.")
-    with file_path.open("r") as file:
-        return file.read()
 
-
-def get_class_content(file_path: Path, class_name: str) -> str:
-    """Extract the text of the specified class from the given file."""
-    class_name = normalise_class_name(class_name)
     with file_path.open("r") as file:
         content = file.read()
-        tree = ast.parse(content)
+
+    if strip:
+        try:
+            tree = ast.parse(content)
+            tree = remove_module_docstring(tree)
+            content = ast.unparse(tree)
+        except SyntaxError as e:
+            print(f"Error parsing {file_path}: {e}")
+            return ""
+
+    return content
+
+
+def remove_class_docstring(node: ast.ClassDef) -> ast.ClassDef:
+    """Remove the docstring from a class node if it exists."""
+    if (len(node.body) > 0 and isinstance(node.body[0], ast.Expr) and
+            isinstance(node.body[0].value, (ast.Str, ast.Constant))):
+        node.body.pop(0)
+    return node
+
+
+def find_class_code(node: ast.ClassDef, content: str, strip: bool) -> str:
+    """Get the source code of the class node, optionally stripping the docstring."""
+    if strip:
+        node = remove_class_docstring(node)
+    return ast.unparse(node)
+
+
+def get_class_content(file_path: Path, class_name: str, strip: bool) -> str:
+    """Extract the text of the specified class from the given file."""
+    class_name = normalise_class_name(class_name)
+    try:
+        with file_path.open("r") as file:
+            content = file.read()
+            tree = ast.parse(content)
+    except FileNotFoundError:
+        print(f"Error: File {file_path} not found.")
+        return ""
+    except SyntaxError as e:
+        print(f"Error parsing {file_path}: {e}")
+        return ""
 
     for node in tree.body:
         if isinstance(node, ast.ClassDef) and node.name == class_name:
-            class_text = ast.get_source_segment(content, node)
-            if class_text is not None:
-                return class_text
+            return find_class_code(node, content, strip)
     return ""
 
 
-def get_function_content(file_path: Path, function_name: str) -> str:
+
+def remove_function_docstring(node: ast.FunctionDef) -> ast.FunctionDef:
+    """Remove the docstring from a function node if it exists."""
+    if (len(node.body) > 0 and isinstance(node.body[0], ast.Expr) and
+            isinstance(node.body[0].value, (ast.Str, ast.Constant))):
+        node.body.pop(0)
+    return node
+
+
+def get_function_code(node: ast.FunctionDef, content: str, strip: bool) -> str:
+    """Get the source code of the function node, optionally stripping the docstring."""
+    if strip:
+        node = remove_function_docstring(node)
+    return ast.unparse(node)
+
+
+def find_function(node: ast.AST, name: str, content: str, strip: bool) -> Optional[str]:
+    """Recursively find a function by name in the AST and return its source code."""
+    if isinstance(node, ast.FunctionDef) and node.name == name:
+        return get_function_code(node, content, strip)
+    for child in ast.iter_child_nodes(node):
+        result = find_function(child, name, content, strip)
+        if result:
+            return result
+    return None
+
+
+def get_function_content(file_path: Path, function_name: str, strip: bool) -> str:
     """Extract the text of the specified function from the given file."""
     function_name = normalise_function_name(function_name)
-    with file_path.open("r") as file:
-        content = file.read()
-        tree = ast.parse(content)
+    try:
+        with file_path.open("r") as file:
+            content = file.read()
+            tree = ast.parse(content)
+    except FileNotFoundError:
+        print(f"Error: File {file_path} not found.")
+        return ""
+    except SyntaxError as e:
+        print(f"Error parsing {file_path}: {e}")
+        return ""
 
-    def find_function(node: ast.AST, name: str, content: str) -> Optional[str]:
-        """Recursively find a function by name in the AST and return its source code."""
-        if isinstance(node, ast.FunctionDef) and node.name == name:
-            return ast.get_source_segment(content, node)
-        for child in ast.iter_child_nodes(node):
-            result = find_function(child, name, content)
-            if result:
-                return result
-        return None
-
-    function_text = find_function(tree, function_name, content)
+    function_text = find_function(tree, function_name, content, strip)
     return function_text if function_text is not None else ""
 
 

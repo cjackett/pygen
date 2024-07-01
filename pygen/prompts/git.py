@@ -1,7 +1,7 @@
 def get_pr_prompt(branch1: str, branch2: str, diff_content: str) -> str:
     return f"""You are a professional and experienced software engineer. Write a comprehensive Git pull request
-    message for the following diff between branches '{branch1}' and '{branch2}'. Follow a rigorous and structured
-    format including:
+message for the following diff between branches '{branch1}' and '{branch2}'. Follow a rigorous and structured format
+including:
 
 Title: [Feature/Fix/Chore/Refactor/Performance/Style/Test/Docs/Security/Hotfix] Provide a concise and descriptive
 title for the pull request.
