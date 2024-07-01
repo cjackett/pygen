@@ -154,12 +154,7 @@ If you encounter any issues or have questions about PyGen, please feel free to o
 contact the maintainer:
 
 - Maintainer: Chris Jackett
-- Email: chris.jackett@csiro.au
 
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
-## Status
-
-This project is currently in development. We appreciate your feedback and contributions as we continue to improve PyGen.
