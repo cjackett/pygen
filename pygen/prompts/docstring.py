@@ -1,4 +1,4 @@
-def get_module_prompt(module_content: str) -> str:
+def get_module_docstring_prompt(module_content: str) -> str:
     return f"""You are a professional and experienced software engineer. Write a Python module docstring following PEP
 257 standards and Google-style format for the code provided below.
 
@@ -23,7 +23,7 @@ or methods.
 """
 
 
-def get_class_prompt(class_content: str) -> str:
+def get_class_docstring_prompt(class_content: str) -> str:
     return f"""You are a professional and experienced software engineer. Write a Python class docstring following PEP
 257 standards and Google-style format for the code provided below.
 
@@ -45,7 +45,7 @@ Formatting rules:
 """
 
 
-def get_function_prompt(function_content: str) -> str:
+def get_function_docstring_prompt(function_content: str) -> str:
     return f"""You are a professional and experienced software engineer. Write a Python function docstring following PEP
 257 standards and Google-style format for the code provided below.
 

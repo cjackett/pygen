@@ -3,7 +3,7 @@ from typing import Optional
 
 import typer
 
-from pygen.prompts.review import get_class_prompt, get_function_prompt, get_module_prompt
+from pygen.prompts.review import get_class_review_prompt, get_function_review_prompt, get_module_review_prompt
 from pygen.utils.llm import prompt_llm
 from pygen.utils.log import get_logger
 from pygen.utils.modules import (
@@ -44,7 +44,7 @@ def review_module(
         typer.echo(str(e))
         raise typer.Exit()
 
-    prompt = get_module_prompt(module_content)
+    prompt = get_module_review_prompt(module_content)
     prompt_llm(ctx, prompt)
 
 
@@ -63,7 +63,7 @@ def review_class(
         typer.echo(str(e))
         raise typer.Exit()
 
-    prompt = get_class_prompt(class_content)
+    prompt = get_class_review_prompt(class_content)
     prompt_llm(ctx, prompt)
 
 
@@ -82,5 +82,5 @@ def review_function(
         typer.echo(str(e))
         raise typer.Exit()
 
-    prompt = get_function_prompt(function_content)
+    prompt = get_function_review_prompt(function_content)
     prompt_llm(ctx, prompt)

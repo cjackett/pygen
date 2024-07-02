@@ -1,6 +1,13 @@
+from pathlib import Path
+from typing import Optional
+
 import typer
 
+from pygen.prompts.tests import get_module_tests_prompt, get_class_tests_prompt, get_function_tests_prompt
+from pygen.utils.llm import prompt_llm
 from pygen.utils.log import get_logger
+from pygen.utils.modules import get_module_path, get_module_content, get_class_name_and_path, get_class_content, \
+    get_function_name_and_path, get_function_content
 
 logger = get_logger(__name__)
 
@@ -9,20 +16,59 @@ tests_app = typer.Typer(
     no_args_is_help=True,
 )
 
-
 @tests_app.command(name="module")
-def generate_tests_module(module_name: str) -> None:
+def generate_docstring_module(
+    ctx: typer.Context,
+    module_name: Optional[str] = typer.Argument(None, help="Name of the module"),
+    project_root: Path = typer.Option(Path("."), help="Root directory of the project"),
+    strip: bool = typer.Option(False, help="Strip any existing docstrings from the selected module."),
+) -> None:
     """Generate tests for a module."""
-    logger.info(f"Generating tests for module: {module_name}")
+    module_path = get_module_path(project_root, module_name)
+
+    try:
+        module_content = get_module_content(module_path, strip)
+    except FileNotFoundError as e:
+        typer.echo(str(e))
+        raise typer.Exit()
+
+    prompt = get_module_tests_prompt(module_content)
+    prompt_llm(ctx, prompt)
 
 
 @tests_app.command(name="class")
-def generate_tests_class(class_name: str) -> None:
+def generate_tests_class(
+    ctx: typer.Context,
+    class_name: Optional[str] = typer.Argument(None, help="Name of the class"),
+    project_root: Path = typer.Option(Path("."), help="Root directory of the project"),
+) -> None:
     """Generate tests for a class."""
-    logger.info(f"Generating tests for class: {class_name}")
+    class_path, class_name = get_class_name_and_path(project_root, class_name)
+
+    try:
+        class_content = get_class_content(class_path, class_name)
+    except FileNotFoundError as e:
+        typer.echo(str(e))
+        raise typer.Exit()
+
+    prompt = get_class_tests_prompt(class_content)
+    prompt_llm(ctx, prompt)
 
 
 @tests_app.command(name="function")
-def generate_tests_function(function_name: str) -> None:
+def generate_tests_function(
+    ctx: typer.Context,
+    function_name: Optional[str] = typer.Argument(None, help="Name of the function"),
+    project_root: Path = typer.Option(Path("."), help="Root directory of the project"),
+) -> None:
     """Generate tests for a function."""
-    logger.info(f"Generating tests for function: {function_name}")
+    function_path, function_name = get_function_name_and_path(project_root, function_name)
+
+    try:
+        function_content = get_function_content(function_path, function_name)
+    except FileNotFoundError as e:
+        typer.echo(str(e))
+        raise typer.Exit()
+
+    prompt = get_function_tests_prompt(function_content)
+    prompt_llm(ctx, prompt)

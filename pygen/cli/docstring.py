@@ -3,7 +3,7 @@ from typing import Optional
 
 import typer
 
-from pygen.prompts.docstring import get_class_prompt, get_function_prompt, get_module_prompt
+from pygen.prompts.docstring import get_class_docstring_prompt, get_function_docstring_prompt, get_module_docstring_prompt
 from pygen.utils.llm import prompt_llm
 from pygen.utils.modules import (
     get_class_content,
@@ -36,7 +36,7 @@ def generate_docstring_module(
         typer.echo(str(e))
         raise typer.Exit()
 
-    prompt = get_module_prompt(module_content)
+    prompt = get_module_docstring_prompt(module_content)
     prompt_llm(ctx, prompt)
 
 
@@ -56,7 +56,7 @@ def generate_docstring_class(
         typer.echo(str(e))
         raise typer.Exit()
 
-    prompt = get_class_prompt(class_content)
+    prompt = get_class_docstring_prompt(class_content)
     prompt_llm(ctx, prompt)
 
 
@@ -76,5 +76,5 @@ def generate_docstring_function(
         typer.echo(str(e))
         raise typer.Exit()
 
-    prompt = get_function_prompt(function_content)
+    prompt = get_function_docstring_prompt(function_content)
     prompt_llm(ctx, prompt)

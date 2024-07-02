@@ -1,4 +1,4 @@
-def get_module_prompt(module_content: str) -> str:
+def get_module_review_prompt(module_content: str) -> str:
     return f"""You are a professional and experienced software engineer. Review the design and implementation of the
 Python module provided below, ensuring it adheres to software engineering best practices.
 
@@ -25,7 +25,7 @@ overall strengths and weaknesses of the implementation.
 """
 
 
-def get_class_prompt(class_content: str) -> str:
+def get_class_review_prompt(class_content: str) -> str:
     return f"""You are a professional and experienced software engineer. Review the design and implementation of the
 Python class provided below, ensuring it adheres to software engineering best practices.
 
@@ -52,7 +52,7 @@ overall strengths and weaknesses of the implementation.
 """
 
 
-def get_function_prompt(function_content: str) -> str:
+def get_function_review_prompt(function_content: str) -> str:
     return f"""You are a professional and experienced software engineer. Review the design and implementation of the
 Python function provided below, ensuring it adheres to software engineering best practices.
 
