@@ -3,10 +3,12 @@ from pathlib import Path
 
 import git
 import typer
+from rich import print  # noqa: A004
 
 from pygen.prompts.git import get_pr_prompt
 from pygen.utils.llm import prompt_llm
 from pygen.utils.log import get_logger
+from pygen.utils.rich import warning_panel
 
 logger = get_logger(__name__)
 
@@ -21,12 +23,14 @@ git_app = typer.Typer(
 def git_check(module_name: str) -> None:
     """Check the staged changes for anything unusual."""
     logger.info(f"committing module: {module_name}")
+    print(warning_panel("Not yet implemented"))
 
 
 @git_app.command(name="commit")
 def git_commit():
     """Generate a commit message for the staged changes."""
     logger.info("Generating commit message")
+    print(warning_panel("Not yet implemented"))
 
 
 def clone_repo(repo_url: str, clone_path: Path) -> git.Repo:

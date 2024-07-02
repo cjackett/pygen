@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Optional
 
 import typer
+from rich import print  # noqa: A004
 
 from pygen.prompts.review import get_class_review_prompt, get_function_review_prompt, get_module_review_prompt
 from pygen.utils.llm import prompt_llm
@@ -14,6 +15,7 @@ from pygen.utils.modules import (
     get_module_content,
     get_module_path,
 )
+from pygen.utils.rich import warning_panel
 
 logger = get_logger(__name__)
 
@@ -27,6 +29,7 @@ review_app = typer.Typer(
 def review_codebase() -> None:
     """Review the codebase and suggest improvements."""
     logger.info("Suggesting improvements for the codebase")
+    print(warning_panel("Not yet implemented"))
 
 
 @review_app.command(name="module")
