@@ -3,11 +3,17 @@ from typing import Optional
 
 import typer
 
-from pygen.prompts.tests import get_module_tests_prompt, get_class_tests_prompt, get_function_tests_prompt
+from pygen.prompts.tests import get_class_tests_prompt, get_function_tests_prompt, get_module_tests_prompt
 from pygen.utils.llm import prompt_llm
 from pygen.utils.log import get_logger
-from pygen.utils.modules import get_module_path, get_module_content, get_class_name_and_path, get_class_content, \
-    get_function_name_and_path, get_function_content
+from pygen.utils.modules import (
+    get_class_content,
+    get_class_name_and_path,
+    get_function_content,
+    get_function_name_and_path,
+    get_module_content,
+    get_module_path,
+)
 
 logger = get_logger(__name__)
 
@@ -16,18 +22,18 @@ tests_app = typer.Typer(
     no_args_is_help=True,
 )
 
+
 @tests_app.command(name="module")
-def generate_docstring_module(
+def generate_tests_module(
     ctx: typer.Context,
     module_name: Optional[str] = typer.Argument(None, help="Name of the module"),
     project_root: Path = typer.Option(Path("."), help="Root directory of the project"),
-    strip: bool = typer.Option(False, help="Strip any existing docstrings from the selected module."),
 ) -> None:
     """Generate tests for a module."""
     module_path = get_module_path(project_root, module_name)
 
     try:
-        module_content = get_module_content(module_path, strip)
+        module_content = get_module_content(module_path)
     except FileNotFoundError as e:
         typer.echo(str(e))
         raise typer.Exit()

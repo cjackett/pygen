@@ -3,7 +3,11 @@ from typing import Optional
 
 import typer
 
-from pygen.prompts.docstring import get_class_docstring_prompt, get_function_docstring_prompt, get_module_docstring_prompt
+from pygen.prompts.docstring import (
+    get_class_docstring_prompt,
+    get_function_docstring_prompt,
+    get_module_docstring_prompt,
+)
 from pygen.utils.llm import prompt_llm
 from pygen.utils.modules import (
     get_class_content,

@@ -1,5 +1,5 @@
 def get_module_tests_prompt(module_content: str) -> str:
-    return f"""You are a professional and experienced software engineer. Write a comprehensive set of pytest unit tests 
+    return f"""You are a professional and experienced software engineer. Write a comprehensive set of pytest unit tests
 for the Python module provided below, ensuring full coverage.
 
 Module Code:
@@ -26,7 +26,7 @@ Formatting rules:
 
 
 def get_class_tests_prompt(class_content: str) -> str:
-    return f"""You are a professional and experienced software engineer. Write a comprehensive set of pytest unit tests 
+    return f"""You are a professional and experienced software engineer. Write a comprehensive set of pytest unit tests
 for the Python class provided below, ensuring full coverage.
 
 Class Code:
@@ -53,7 +53,7 @@ Formatting rules:
 
 
 def get_function_tests_prompt(function_content: str) -> str:
-    return f"""You are a professional and experienced software engineer. Write a comprehensive set of pytest unit tests 
+    return f"""You are a professional and experienced software engineer. Write a comprehensive set of pytest unit tests
 for the Python function provided below, ensuring full coverage.
 
 Function Code:
