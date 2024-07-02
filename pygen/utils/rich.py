@@ -68,7 +68,7 @@ def prompt_panel(message: str, title: str = "Prompt") -> Panel:
         A Panel object configured with the specified message and title.
     """
     longest_line_length = max(len(line) for line in message.split("\n"))
-    panel_width = min(longest_line_length, 120)
+    panel_width = min(longest_line_length + 4, 124)
     return Panel(message, title="Prompt", title_align="left", border_style="cyan", width=panel_width)
 
 
