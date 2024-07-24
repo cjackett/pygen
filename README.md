@@ -1,14 +1,7 @@
 <!-- PROJECT LOGO -->
 <figure markdown style="text-align: center">
   <img src="docs/img/logo.jpg" alt="PyGen logo" width="512px">
-  ![](docs/img/logo.png "PyGen logo")
-</figure>
-
-<figure markdown style="text-align: center">
-
-![](img/logo.png "Marimba logo")
-![](docs/img/logo.png "Marimba logo")
-
+![](docs/img/logo.png "PyGen logo")
 </figure>
 
 PyGen is a Python Generative AI Co-pilot designed to enhance productivity and streamline development processes for
