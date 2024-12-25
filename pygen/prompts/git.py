@@ -120,3 +120,37 @@ Here is the Git diff between branches '{branch1}' and '{branch2}':
 
 {diff_content}
 """
+
+def get_git_review(branch1: str, branch2: str, diff_content: str) -> str:
+    return f"""You are a professional and experienced software engineer. Review the changes introduced in the Git diff
+between branches '{branch1}' and '{branch2}', ensuring they adhere to software engineering best practices.
+
+Git Diff:
+
+{diff_content}
+
+Your message should cover the following key areas:
+1. Summary: Provide a clear and concise summary of the changes introduced in this diff.
+2. Code Quality: Assess the overall quality of the changes, including readability, consistency, maintainability,
+and adherence to coding standards.
+3. Design Impact: Evaluate how the changes affect the design of the existing codebase, including modularity, separation
+of concerns, and adherence to SOLID principles (Single Responsibility, Open/Closed, Liskov Substitution, Interface
+Segregation, Dependency Inversion), as well as the DRY (Don't Repeat Yourself) and YAGNI (You Aren't Gonna Need It)
+principles.
+4. Design Patterns: Identify any design patterns introduced or modified by the changes, evaluate their appropriateness,
+and suggest any additional patterns that could improve the design.
+5. Documentation: Review the documentation added or modified in the changes, including docstrings and comments, for
+completeness, clarity, and adherence to documentation standards.
+6. Error Handling: Examine how errors and exceptions are managed in the new or modified code.
+7. Dependencies: Identify any new external libraries or modules introduced by the changes, and assess their necessity
+and impact on the codebase.
+8. Performance and Scalability: Analyze any potential performance issues or bottlenecks introduced by the changes, and
+assess whether the changes are designed to handle increased load and scale effectively.
+9. Security: Evaluate the changes for any potential security vulnerabilities or practices that could lead to security
+issues.
+10. Testing: Confirm that the changes are adequately tested, including unit tests, integration tests, and any other
+relevant test coverage.
+
+Provide detailed feedback on each point, referencing specific parts of the Git diff where necessary, and discuss the
+overall strengths and weaknesses of the changes.
+"""

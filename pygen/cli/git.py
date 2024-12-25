@@ -5,7 +5,7 @@ import git
 import typer
 from rich import print  # noqa: A004
 
-from pygen.prompts.git import get_pr_prompt
+from pygen.prompts.git import get_pr_prompt, get_git_review
 from pygen.utils.llm import prompt_llm
 from pygen.utils.log import get_logger
 from pygen.utils.rich import warning_panel
@@ -80,6 +80,34 @@ def git_pull_request(
                 raise typer.Exit()
 
             pr_message_prompt = get_pr_prompt(branch1, branch2, diff_text)
+            prompt_llm(ctx, pr_message_prompt)
+
+        except git.exc.GitError as git_error:
+            typer.echo(f"Git error occurred: {git_error}")
+            raise typer.Exit()
+
+@git_app.command(name="review")
+def git_review(
+    ctx: typer.Context,
+    repo_url: str,
+    branch1: str,
+    branch2: str,
+) -> None:
+    """Review the diff between two branches."""
+
+    with tempfile.TemporaryDirectory() as tmp_dir_name:
+        clone_path = Path(tmp_dir_name) / Path(repo_url).stem
+        try:
+            repo = clone_repo(repo_url, clone_path)
+            fetch_all_branches(repo)
+            checkout_branch(repo, branch1)
+            checkout_branch(repo, branch2)
+            diff_text = get_branch_diff(repo, branch1, branch2)
+            if not diff_text:
+                typer.echo("No differences found between the specified branches.")
+                raise typer.Exit()
+
+            pr_message_prompt = get_git_review(branch1, branch2, diff_text)
             prompt_llm(ctx, pr_message_prompt)
 
         except git.exc.GitError as git_error:
